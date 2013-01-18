@@ -1,0 +1,30 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>RPG Map Editor</title>
+    <link rel="stylesheet" type="text/css" href="css/editor.css" />
+</head>
+<body>
+    <form id="form_taille_map" name="form_taille_map" action="#">
+        <label for="nb_tiles_largeur">Largeur carte (en cellules)</label>
+        <input id="nb_tiles_largeur" name="nb_tiles_largeur" type="text" value="9" />
+        <label for="nb_tiles_hauteur">Hauteur carte (en cellules)</label>
+        <input id="nb_tiles_hauteur" name="nb_tiles_hauteur" type="text" value="9" />
+        
+        <input type="submit" value="Ok" />
+    </form>
+    <div>
+        <table id="map_layer">
+           <!-- <tbody>
+                <tr><td>a</td><td></td><td></td></tr>
+                <tr><td></td><td>b</td><td></td></tr>
+                <tr><td></td><td></td><td>z</td></tr>
+            </tbody>-->
+        </table>
+        <div id="palette">
+        </div>
+    </div>
+    <script type="text/javascript" src="js/editor.js"></script>
+</body>
+</html>
