@@ -4,8 +4,8 @@ var DIRECTION = {
 	"DROITE" : 2,
 	"HAUT"   : 3
 }
-var DUREE_ANIMATION = 4;
-var DUREE_DEPLACEMENT = 15;
+var DUREE_ANIMATION = 8;
+var DUREE_DEPLACEMENT = 30;
 
 
 function Personnage(url, x, y, direction) {
@@ -57,7 +57,7 @@ function Personnage(url, x, y, direction) {
 		return decalage;
 	}
 	
-	this.dessinerPersonnage = function(context, map, camera) {
+	this.draw = function(context, map, camera) {
 		var frame = 0; // Numéro de l'image à prendre pour l'animation
 		var decalageX = 0, decalageY = 0; // Décalage à appliquer à la position du personnage
 		if(this.etatAnimation >= DUREE_DEPLACEMENT) {
@@ -158,6 +158,24 @@ function Personnage(url, x, y, direction) {
 		this.y = prochaineCase.y;
 		
 		return true;
+	},
+
+	this.update = function(keyboard, map) {
+		if (keyboard) {
+			//console.log('keyboard exists');
+			if (keyboard.isPressed('up')) {
+	            this.deplacer(DIRECTION.HAUT, map);
+	        }
+	        else if (keyboard.isPressed('down')) {
+	            this.deplacer(DIRECTION.BAS, map);
+	        }
+	        else if (keyboard.isPressed('left')) {
+	            this.deplacer(DIRECTION.GAUCHE, map);
+	        }
+	        else if (keyboard.isPressed('right')) {
+	            this.deplacer(DIRECTION.DROITE, map);
+	        }
+    	}
 	}
 
 }

@@ -17,6 +17,7 @@ function Map(nom) {
 	else
 	    eval("mapData = " + mapJsonData);
 	this.terrain = mapData.terrain;
+	console.log('this.terrain set. height = ' + this.terrain.length);
 	this.tileWidth = mapData.tileWidth;
 	this.tileHeight = mapData.tileHeight;
 	this.tileset = new Tileset(mapData.tileset, this.tileWidth, this.tileHeight);

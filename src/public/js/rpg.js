@@ -94,8 +94,8 @@ function start() {
         map.dessinerMap(ctx, camera);
     }, Math.round(1000 / desiredFPS));
 
-
-    function loadGameState() {
+    
+    var loadGameState = function () {
         console.log("Process loading...");
         if (localStorage && JSON) {
             var itemString = localStorage.getItem("rpg-game-state");
@@ -114,7 +114,18 @@ function start() {
         }
     }
 
-    function saveGameState() {
+    var start = function() {
+        this.tick();
+        this.hasNeverStarted = false;
+        log.info("Game loop started.");
+    }
+
+    var stop = function() {
+        log.info("Game stopped.");
+        this.isStopped = true;
+    }
+
+    var saveGameState = function() {
         console.log("Process saving...");
         if (localStorage && JSON) {
             var state = { x: joueur.x, y: joueur.y, direction: joueur.direction };
