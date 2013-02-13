@@ -20,6 +20,13 @@ var Entity = BaseClass.extend({
 	 * 		color of the entity. default if red
 	 */
 	initialize : function (name, x, y, w, h, color) {
+		console.log('[entity initialize]');
+		console.log('	name : ' + name);
+		console.log('	x    : ' + x);
+		console.log('	y    : ' + y);
+		console.log('	w    : ' + w);
+		console.log('	h    : ' + h);
+
 		this.name = name;
 
 		this.x = x;
@@ -51,7 +58,7 @@ var Entity = BaseClass.extend({
 	/**
 	 * Updates the entity
 	 */
-	update : function() {
+	update : function(map, keyboard) {
 
 	},
 

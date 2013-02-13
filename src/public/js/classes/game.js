@@ -24,7 +24,10 @@ var Game = BaseClass.extend({
     	this.context = (this.canvas && this.canvas.getContext) ? this.canvas.getContext("2d") : null;
 
     	this.map = new Map("premiere");
-    	window.player = this.player = new Player("angel1.png", 7, 7, DIRECTION.BAS);
+        console.log('this.map.getTileHeight ' + this.map.getTileHeight());
+    	window.player = this.player = new Player('player', 2, 2, 
+                this.map.getTileWidth(), this.map.getTileHeight(), 
+                80, 64, direction.DOWN);
         this.entities = [
             new Entity('entity1', 50, 60, 20, 30, 'green'),
             new Entity('entity2', 150, 70, 40, 10, 'purple'),
@@ -109,6 +112,20 @@ var Game = BaseClass.extend({
     	this.drawText("FPS: " + this.realFPS, 30, 30, false);
     },
 
+    drawPlayerPos : function() {
+        if (this.player) {
+            var dir = '';
+            switch (this.player.direction) {
+                case direction.UP    : dir = 'up'; break;
+                case direction.DOWN  : dir = 'down'; break;
+                case direction.LEFT  : dir = 'left'; break;
+                case direction.RIGHT : dir = 'right'; break;
+            }
+            this.drawText('Player: [' + this.player.gx + ', ' 
+                + this.player.gy + '], dir : ' + dir, 100, 30, false);
+        }
+    },
+
     drawText : function(text, x, y, centered, color, strokeColor) {
         var ctx = this.context;
         
@@ -131,6 +148,7 @@ var Game = BaseClass.extend({
     drawDebugInfo : function() {
         if(this.isDebugInfoVisible) {
             this.drawFPS();
+            this.drawPlayerPos();
         }
     },
 
@@ -144,12 +162,12 @@ var Game = BaseClass.extend({
     	this.entities.forEach(function(entity) { 
             entity.draw(this.context, this.camera) 
         }.bind(this));
-        this.hud.draw(this.context);
+        //this.hud.draw(this.context);
     	this.drawDebugInfo();
     },
 
     update : function(){
-      this.entities.forEach(function(entity) { entity.update(this.keyboard, this.map) }.bind(this));
+      this.entities.forEach(function(entity) { entity.update(this.map, this.keyboard) }.bind(this));
       this.camera.update(this.keyboard);
     }
 });

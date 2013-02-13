@@ -51,6 +51,29 @@ var Map = BaseClass.extend({
 		return this.mapHeight;
 	},
 
+	getAdjacentCellCoord : function(srcCoord, dir) {
+		var destCoord = { x : srcCoord.x, y : srcCoord.y}
+		switch(dir) {
+			case direction.DOWN : 
+				destCoord.y++;
+				break;
+			case direction.LEFT : 
+				destCoord.x--;
+				break;
+			case direction.RIGHT : 
+				destCoord.x++;
+				break;
+			case direction.UP : 
+				destCoord.y--;
+				break;
+		}
+		if (destCoord.x < 0 || destCoord.x >= this.mapWidth 
+			|| destCoord.y < 0 || destCoord.y >= this.mapHeight) {
+			return null;
+		}
+		return destCoord;
+	},
+
 	getGridWidth : function() {
 		return this.mapWidth;
 	},

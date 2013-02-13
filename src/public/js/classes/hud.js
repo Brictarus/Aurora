@@ -36,7 +36,7 @@ var Hud = Class.extend({
 		ctxt.lineWidth = 2;
 
 		// HP
-		var prctHP = Math.max(Math.min(this.character.HP / this.character.maxHP, 1), 0);
+		var prctHP = Math.max(Math.min(this.character.hp / this.character.hpMax, 1), 0);
 		
 		var grdHP = ctxt.createRadialGradient(this.x + this.h / 2,this.y + this.h / 2,0,this.x + this.h / 2,this.y + this.h / 2,this.h / 2);
 	    grdHP.addColorStop(0, '#F77');
@@ -57,7 +57,7 @@ var Hud = Class.extend({
 		ctxt.closePath();
 
 		// MP
-		var prctMP = Math.max(Math.min(this.character.MP / this.character.maxMP, 1), 0);
+		var prctMP = Math.max(Math.min(this.character.mp / this.character.mpMax, 1), 0);
 
 		var grdMP = ctxt.createRadialGradient(this.x + this.w - this.h / 2,this.y + this.h / 2,0,this.x + this.w - this.h / 2,this.y + this.h / 2,this.h / 2);
 	    grdMP.addColorStop(0, '#00C9FF');

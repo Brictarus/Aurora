@@ -6,3 +6,5 @@ var keyboard = new Keyboard(window);
 var game = new Game({ canvas : canvas, keyboard : keyboard });
 console.log(game);
 game.start();
+
+//var player = new Player('toto', 5, 6, 7, 8, 'blue');
