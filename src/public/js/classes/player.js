@@ -4,14 +4,20 @@ var DIRECTION = {
 	"DROITE" : 2,
 	"HAUT"   : 3
 }
-var DUREE_ANIMATION = 8;
-var DUREE_DEPLACEMENT = 30;
+var DUREE_ANIMATION = 100;
+var DUREE_DEPLACEMENT = 4;
 
 
-function Personnage(url, x, y, direction) {
+function Player(url, x, y, direction) {
 	var that = this;
 	var tileSize = 32;
 	this.etatAnimation = -1;
+
+	this.maxHP = 100;
+	this.HP = 80;
+	this.maxMP = 80;
+	this.MP = 60;
+
 
 	this.x = x; // (en cases)
 	this.y = y; // (en cases)
@@ -36,9 +42,19 @@ function Personnage(url, x, y, direction) {
 	}
 	this.image.src = "sprites/" + url;
 	
+	this.getBoundingBox = function() {
+		return {
+			x : this.xPixels,
+			y : this.yPixels,
+			w : this.w,
+			h : this.h
+		};
+	}
+
 	this._calculerDecalage = function () {
 		var decalage = { x : 0, y : 0 };
-		if(this.etatAnimation >= 0) {			
+		if(this.etatAnimation >= 0) {
+			console.log('this.etatAnimation = ' + this.etatAnimation);
 			// Nombre de pixels restant à parcourir entre les deux cases
 			var pixelsAParcourir = tileSize - (tileSize * (this.etatAnimation / DUREE_DEPLACEMENT));
 			
@@ -57,7 +73,7 @@ function Personnage(url, x, y, direction) {
 		return decalage;
 	}
 	
-	this.draw = function(context, map, camera) {
+	this.draw = function(context, camera) {
 		var frame = 0; // Numéro de l'image à prendre pour l'animation
 		var decalageX = 0, decalageY = 0; // Décalage à appliquer à la position du personnage
 		if(this.etatAnimation >= DUREE_DEPLACEMENT) {
@@ -133,7 +149,7 @@ function Personnage(url, x, y, direction) {
 		};
 	}
 		
-	this.deplacer = function(direction, map) {
+	this.move = function(direction, map) {
 		// On ne peut pas se déplacer si un mouvement est déjà en cours !
 		if(this.etatAnimation >= 0) {
 			return false;
@@ -144,7 +160,7 @@ function Personnage(url, x, y, direction) {
 			
 		// On vérifie que la case demandée est bien située dans la carte
 		var prochaineCase = this.getCoordonneesAdjacentes(direction);
-		if(prochaineCase.x < 0 || prochaineCase.y < 0 || prochaineCase.x >= map.getLargeur() || prochaineCase.y >= map.getHauteur()) {
+		if(prochaineCase.x < 0 || prochaineCase.y < 0 || prochaineCase.x >= map.getGridWidth() || prochaineCase.y >= map.getGridHeight()) {
 			// On retourne un booléen indiquant que le déplacement ne s'est pas fait, 
 			// Ça ne coute pas cher et ca peut toujours servir
 			return false;
@@ -164,16 +180,16 @@ function Personnage(url, x, y, direction) {
 		if (keyboard) {
 			//console.log('keyboard exists');
 			if (keyboard.isPressed('up')) {
-	            this.deplacer(DIRECTION.HAUT, map);
+	            this.move(DIRECTION.HAUT, map);
 	        }
 	        else if (keyboard.isPressed('down')) {
-	            this.deplacer(DIRECTION.BAS, map);
+	            this.move(DIRECTION.BAS, map);
 	        }
 	        else if (keyboard.isPressed('left')) {
-	            this.deplacer(DIRECTION.GAUCHE, map);
+	            this.move(DIRECTION.GAUCHE, map);
 	        }
 	        else if (keyboard.isPressed('right')) {
-	            this.deplacer(DIRECTION.DROITE, map);
+	            this.move(DIRECTION.DROITE, map);
 	        }
     	}
 	}

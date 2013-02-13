@@ -11,5 +11,8 @@ var collisions = {
 	},
 	canContain: function(o1, o2) {
 		return (o1.w >= o2.w && o1.h >= o2.h);
-	}
+	},
+	isSmaller : function(o1, o2) {
+		return (o1.w >= o2.w && o1.h >= o2.h);
+	},
 }
