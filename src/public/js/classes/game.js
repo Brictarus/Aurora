@@ -162,7 +162,7 @@ var Game = BaseClass.extend({
     	this.entities.forEach(function(entity) { 
             entity.draw(this.context, this.camera) 
         }.bind(this));
-        //this.hud.draw(this.context);
+        this.hud.draw(this.context);
     	this.drawDebugInfo();
     },
 

@@ -1,0 +1,10 @@
+{
+	"tileKind" : "square",
+	"tileWidth" : 32,
+	"tileHeight" : 32,
+	"rows" : 4,
+	"columns" : 4,
+	"tileCount" : 16,
+	"animatedTiles" : {
+	}
+}

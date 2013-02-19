@@ -15,7 +15,6 @@ var Keyboard = BaseClass.extend({
 		for (var role in this.keyMappings) {
 			this.reversedKeyMapping[this.keyMappings[role]] = role;
 		}
-		console.log(this.reversedKeyMapping);
 
 		if (container) {
 			container.addEventListener('keydown', this.onKeyDown.bind(this), false);
