@@ -76,6 +76,20 @@ var Entity = BaseClass.extend({
 		context.fillStyle = this.color;
 		context.fillRect(this.x - offsetX, this.y - offsetY, this.w, this.h);
 
+		this.drawBoundingBox(context, camera);
+		
+		context.restore();
+	},
+	
+	drawBoundingBox : function(context, camera) {
+		context.save();
+
+		var offsetX = camera && camera.xScroll ? camera.xScroll : 0;
+		var offsetY = camera && camera.yScroll ? camera.yScroll : 0;
+
+		context.strokeStyle = '#0F0';
+		context.strokeRect(this.x - offsetX, this.y - offsetY, this.w, this.h);
+		
 		context.restore();
 	}
 });
