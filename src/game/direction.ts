@@ -1,4 +1,4 @@
-var direction = {
+export const direction = {
 	DOWN  : 0,
 	LEFT  : 1,
 	RIGHT : 2,

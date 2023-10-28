@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node src/app"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "dependencies": {
-    "express": "3.0.4",
-    "ejs": "*",
-    "stylus": "*"
+  "devDependencies": {
+    "@types/node": "^20.8.9",
+    "vite": "^4.4.5"
   }
 }
