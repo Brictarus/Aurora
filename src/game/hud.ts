@@ -1,12 +1,14 @@
+import { Player } from './player';
+
 export class Hud {
 
-	character = null;
-	x = null;
-	y = null;
-	w = null;
-	h = null;
+	character: Player;
+	x: number;
+	y: number;
+	w: number;
+	h: number;
 
-	constructor(character, x, y, w, h) {
+	constructor(character: Player, x: number, y: number, w: number, h: number) {
 		this.character = character;
 		this.x = x;
 		this.y = y;
@@ -14,7 +16,7 @@ export class Hud {
 		this.h = h;
 	}
 
-	draw(ctxt) {
+	draw(ctxt: CanvasRenderingContext2D) {
 		ctxt.save();
 		ctxt.lineWidth = 2;
 
@@ -63,12 +65,12 @@ export class Hud {
 		ctxt.restore();
 	}
 
-	drawPartialCircle(ctxt, x, y, r, prct) {
-		const tArc = Math.asin(2 * prct - 1);
+	drawPartialCircle(ctxt: CanvasRenderingContext2D, x: number, y: number, r: number, percentage: number) {
+		const tArc = Math.asin(2 * percentage - 1);
 		ctxt.beginPath();
-		if (prct === 1) {
+		if (percentage === 1) {
 			ctxt.arc(x, y, r, 0,  2 * Math.PI, false);
-		} else if (prct === 0) {
+		} else if (percentage === 0) {
 			ctxt.arc(x, y, r, -Math.PI/2, -Math.PI/2, false);
 		} else {
 			ctxt.arc(x, y, r, -tArc, -Math.PI + tArc, false);
@@ -77,11 +79,11 @@ export class Hud {
 		ctxt.fill();
 	}
 
-	fillEllipse(ctxt, x, y, w, h) {
+	fillEllipse(ctxt: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
 		this.drawEllipse(ctxt, x, y, w, h, 'fill');
 	}
 
-	drawEllipse (ctxt, x, y, w, h, func) {
+	drawEllipse (ctxt: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, func: 'fill') {
 		const kappa = .5522848;
 		const origX = x - w / 2;
 		const origY = y - h / 2;

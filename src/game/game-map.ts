@@ -1,17 +1,28 @@
+import { Terrain } from '@core/common-types';
+import { Camera } from './camera';
 import { Tileset } from "./tileset";
-import { direction } from "./direction";
+import { Direction } from "./direction";
+
+interface JsonMapData {
+  terrain: Terrain;
+  tileWidth: number;
+  tileHeight: number;
+  mapWidth: number;
+  mapHeight: number;
+  tileset: string;
+}
 
 export class GameMap {
 
   mustDrawMesh = true;
-  terrain = null;
-  tileWidth = null;
-  tileHeight = null;
-  mapHeight = null;
-  mapWidth = null;
-  tileset = null;
+  readonly terrain: Terrain;
+  readonly tileWidth: number;
+  readonly tileHeight: number;
+  readonly mapHeight: number;
+  readonly mapWidth: number;
+  readonly tileset: Tileset;
 
-  constructor(mapData) {
+  constructor(mapData: JsonMapData) {
     this.terrain = mapData.terrain;
     this.tileWidth = mapData.tileWidth;
     this.tileHeight = mapData.tileHeight;
@@ -28,24 +39,24 @@ export class GameMap {
     return this.tileHeight;
   }
 
-  // Pour r�cup�rer la taille (en tiles) de la carte
+  // Pour récupérer la taille (en tiles) de la carte
   getGridHeight() {
     return this.mapHeight;
   }
 
-  getAdjacentCellCoord(srcCoord, dir) {
+  getAdjacentCellCoord(srcCoord: { x: number, y: number }, dir: Direction) {
     const destCoord = {x: srcCoord.x, y: srcCoord.y};
     switch (dir) {
-      case direction.DOWN :
+      case Direction.DOWN :
         destCoord.y++;
         break;
-      case direction.LEFT :
+      case Direction.LEFT :
         destCoord.x--;
         break;
-      case direction.RIGHT :
+      case Direction.RIGHT :
         destCoord.x++;
         break;
-      case direction.UP :
+      case Direction.UP :
         destCoord.y--;
         break;
     }
@@ -60,7 +71,7 @@ export class GameMap {
     return this.mapWidth;
   }
 
-  drawMap(context, cam) {
+  drawMap(context: CanvasRenderingContext2D, cam: Camera) {
     const camSize = cam.getWindowSize();
     const minx = Math.floor(cam.xScroll / this.tileWidth);
     const miny = Math.floor(cam.yScroll / this.tileHeight);
@@ -71,20 +82,20 @@ export class GameMap {
       const y = i * 32 - cam.yScroll;
       for (let j = minx; j < maxx; j++) {
         const x = j * 32 - cam.xScroll;
-        this.tileset.dessinerTile(ligne[j], context, x, y);
+        this.tileset.drawTile(ligne[j], context, x, y);
       }
     }
 
     if (this.mustDrawMesh) {
       this.drawMapMesh(context, minx, maxx, miny, maxy, cam);
     }
-    if (__debug) {
+    if (window.__debug) {
       cam.draw(context);
     }
   }
 
-  drawMapMesh(context, minx, maxx, miny, maxy, cam) {
-    const strokeColor = __debugDrawingColor1;
+  drawMapMesh(context: CanvasRenderingContext2D, minx: number, maxx: number, miny: number, maxy: number, cam: Camera) {
+    const strokeColor = window.__debugDrawingColor1;
     // tracé des lignes horizontales
     for (let y = miny; y < maxy; y++) {
       const xStart = minx * this.tileWidth - cam.xScroll;
@@ -96,7 +107,7 @@ export class GameMap {
       context.lineTo(xStop, yPixels);
       context.stroke();
     }
-    // trac� des lignes verticales
+    // tracé des lignes verticales
     for (let x = minx; x < maxx; x++) {
       const yStart = miny * this.tileHeight - cam.yScroll;
       const yStop = maxy * this.tileHeight - cam.yScroll;

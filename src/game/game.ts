@@ -1,30 +1,37 @@
-import { Loader } from "./loader";
-import { GameMap } from "./game-map";
-import { Player } from "./player";
-import { Entity } from "./entity";
-import { direction } from "./direction";
-import { Camera } from "./camera";
-import { Hud } from "./hud";
+import { Camera } from './camera';
+import { Direction } from './direction';
+import { Entity } from './entity';
+import { GameMap } from './game-map';
+import { Hud } from './hud';
+import { Keyboard } from './keyboard';
+import { Loader } from './loader';
+import { Player } from './player';
 
 export class Game {
-  constructor(config) {
-    this.started = false;
-    this.isStopped = false;
+  private started = false;
+  private isStopped = false;
 
-    this.FPS = null;
-    this.lastTime = new Date();
-    this.lastFrameTime = new Date();
-    this.frameCount = 0;
-    this.realFPS = 0;
-    this.isDebugInfoVisible = true;
+  private readonly FPS: number | undefined;
+  private lastTime = new Date();
+  private lastFrameTime = new Date();
+  private frameCount = 0;
+  private realFPS = 0;
+  private isDebugInfoVisible = true;
 
-    this.camera = null;
+  private camera: Camera | undefined;
+  private entities: Entity[] = [];
+  private map: GameMap | undefined;
+  private loader = new Loader();
+  private readonly keyboard: Keyboard;
+  private readonly canvas: HTMLCanvasElement;
+  private readonly context: CanvasRenderingContext2D;
+  private player: Player | undefined;
+  private hud: Hud | undefined;
+
+  constructor(config: any) {
     this.keyboard = config.keyboard;
-    this.entities = [];
-    this.map = null;
-    this.loader = new Loader();
     this.canvas = config.canvas;
-    this.context = (this.canvas && this.canvas.getContext) ? this.canvas.getContext("2d") : null;
+    this.context = this.canvas.getContext('2d')!;
 
     this.fetchMap('premiere')
       .then(json => {
@@ -33,12 +40,12 @@ export class Game {
       })
   }
 
-  fetchMap(mapName) {
+  fetchMap(mapName: string) {
     return fetch(`./maps/${mapName}.json`)
       .then(response => response.json());
   }
 
-  tick () {
+  tick() {
     if (this.started) {
       this.update();
 
@@ -55,13 +62,13 @@ export class Game {
     }
   }
 
-  start () {
+  start() {
     this.started = true;
     this.loader.addSprite('angel1.png');
-    this.loader.load(function () {
-      window.player = this.player = new Player('player', 2, 2,
-        this.map.getTileWidth(), this.map.getTileHeight(),
-        80, 64, direction.DOWN, this.loader.sprites['angel1.png']);
+    this.loader.load(() => {
+      this.player = new Player('player', 2, 2,
+        this.map!.getTileWidth(), this.map!.getTileHeight(),
+        80, 64, Direction.DOWN, this.loader.sprites['angel1.png'].image);
       this.entities = [
         new Entity('entity1', 50, 60, 20, 30, 'green'),
         new Entity('entity2', 150, 70, 40, 10, 'purple'),
@@ -69,24 +76,23 @@ export class Game {
       ];
       this.entities.push(this.player);
       this.createCamera();
-      //this.camera.canPan = true;
-      this.camera.followEntity(this.player);
+
+      this.camera?.followEntity(this.player);
       const hudHeight = 50;
       this.hud = new Hud(this.player, 0, this.canvas.height - hudHeight, this.canvas.width, hudHeight);
       this.tick();
-      console.log("Game loop started.");
-    }.bind(this));
+    });
   }
 
-  createCamera () {
-    this.camera = new Camera(300, 300, 0, 0, this.map.getGridHeight() * this.map.getTileHeight(), this.map.getGridWidth() * this.map.getTileWidth());
+  createCamera() {
+    this.camera = new Camera(300, 300, 0, 0, this.map!.getGridHeight() * this.map!.getTileHeight(), this.map!.getGridWidth() * this.map!.getTileWidth());
     this.camera.setDeadZoneSize(100, 100);
     const windowSize = this.camera.getWindowSize();
     this.canvas.width = windowSize.w;
     this.canvas.height = windowSize.h;
   }
 
-  drawFPS () {
+  drawFPS() {
     const nowTime = new Date(),
       diffTime = nowTime.getTime() - this.lastTime.getTime();
 
@@ -97,23 +103,23 @@ export class Game {
     }
     this.frameCount++;
 
-    this.drawText("FPS: " + this.realFPS, 30, 30, false);
+    this.drawText(`FPS: ${this.realFPS}`, 30, 30, false);
   }
 
-  drawPlayerPos () {
+  drawPlayerPos() {
     if (this.player) {
       let dir = '';
-      switch (this.player.direction) {
-        case direction.UP:
+      switch (this.player!.direction) {
+        case Direction.UP:
           dir = 'up';
           break;
-        case direction.DOWN:
+        case Direction.DOWN:
           dir = 'down';
           break;
-        case direction.LEFT:
+        case Direction.LEFT:
           dir = 'left';
           break;
-        case direction.RIGHT:
+        case Direction.RIGHT:
           dir = 'right';
           break;
       }
@@ -122,7 +128,7 @@ export class Game {
     }
   }
 
-  drawText (text, x, y, centered, color, strokeColor) {
+  drawText(text: string, x: number, y: number, centered: boolean, color?: string, strokeColor?: string) {
     const ctx = this.context;
 
     const strokeSize = 3;
@@ -130,44 +136,42 @@ export class Game {
     if (text && x && y) {
       ctx.save();
       if (centered) {
-        ctx.textAlign = "center";
+        ctx.textAlign = 'center';
       }
-      ctx.strokeStyle = strokeColor || "#373737";
+      ctx.strokeStyle = strokeColor || '#373737';
       ctx.lineWidth = strokeSize;
       ctx.strokeText(text, x, y);
-      ctx.fillStyle = color || "white";
+      ctx.fillStyle = color || 'white';
       ctx.fillText(text, x, y);
       ctx.restore();
     }
   }
 
-  drawDebugInfo () {
+  drawDebugInfo() {
     if (this.isDebugInfoVisible) {
       this.drawFPS();
       this.drawPlayerPos();
     }
   }
 
-  clearScreen () {
+  clearScreen() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  renderFrame () {
+  renderFrame() {
     this.clearScreen();
-    this.map.drawMap(this.context, this.camera);
-    this.entities.forEach(function (entity) {
-      entity.draw(this.context, this.camera)
-    }
-      .bind(this));
-    this.hud.draw(this.context);
+    this.map!.drawMap(this.context, this.camera!);
+    this.entities.forEach((entity) => {
+      entity.draw(this.context, this.camera!)
+    });
+    this.hud!.draw(this.context);
     this.drawDebugInfo();
   }
 
-  update () {
-    this.entities.forEach(function (entity) {
-      entity.update(this.map, this.keyboard)
-    }
-      .bind(this));
-    this.camera.update(this.keyboard);
+  update() {
+    this.entities.forEach((entity) => {
+      entity.update(this.map!, this.keyboard)
+    });
+    this.camera!.update(this.keyboard);
   }
 }

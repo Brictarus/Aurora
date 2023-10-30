@@ -1,6 +1,6 @@
-export const direction = {
-	DOWN  : 0,
-	LEFT  : 1,
-	RIGHT : 2,
-	UP    : 3
+export enum Direction {
+	DOWN,
+	LEFT,
+	RIGHT,
+	UP
 }

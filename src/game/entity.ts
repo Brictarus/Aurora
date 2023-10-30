@@ -1,9 +1,16 @@
-/*
- * Base class for all entities in game
- *
- * @author Brictarus
- */
+import { Color } from '@core/common-types';
+import { Camera } from './camera';
+import { GameMap } from './game-map';
+import { Keyboard } from './keyboard';
+
 export class Entity {
+  name: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color: Color;
+
   /**
    * Constructor
    * @param name name of the entity
@@ -13,7 +20,7 @@ export class Entity {
    * @param h entity height
    * @param [color] color of the entity. default if red
    */
-  constructor(name, x, y, w, h, color) {
+  constructor(name: string, x: number, y: number, w: number, h: number, color?: Color) {
     this.name = name;
 
     this.x = x;
@@ -23,18 +30,19 @@ export class Entity {
 
     this.color = color || '#FF0000';
   }
+
   /**
    * Updates the entity
    */
-  update(map, keyboard) {
+  update(_map: GameMap, _keyboard: Keyboard) {
   }
 
   getBoundingBox() {
     return {
-      x : this.x,
-      y : this.y,
-      w : this.w,
-      h : this.h
+      x: this.x,
+      y: this.y,
+      w: this.w,
+      h: this.h
     };
   }
 
@@ -43,7 +51,7 @@ export class Entity {
    * @param context drawing context
    * @param camera camera to use
    */
-  draw(context, camera) {
+  draw(context: CanvasRenderingContext2D, camera: Camera) {
     context.save();
 
     const offsetX = camera && camera.xScroll ? camera.xScroll : 0;
@@ -57,7 +65,7 @@ export class Entity {
     context.restore();
   }
 
-  drawBoundingBox(context, camera) {
+  drawBoundingBox(context: CanvasRenderingContext2D, camera: Camera) {
     context.save();
 
     const offsetX = camera && camera.xScroll ? camera.xScroll : 0;

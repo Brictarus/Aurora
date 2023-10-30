@@ -1,6 +1,8 @@
-import { Entity } from "./entity";
-import { Logger } from "../logger";
-import { direction } from "./direction";
+import { Camera } from './camera';
+import { Direction } from './direction';
+import { Entity } from './entity';
+import { GameMap } from './game-map';
+import { Keyboard } from './keyboard';
 
 export class Player extends Entity {
 
@@ -9,16 +11,24 @@ export class Player extends Entity {
   mpMax = 80;
   mp = 60;
 
-  isWalking = 0;
-  walkAnimationDuration = 60;
-  walkSteps = 4;
+  gx: number;
+  gy: number;
+  direction: Direction;
+
+  private isWalking = 0;
+  private walkAnimationDuration = 60;
+  private walkSteps = 4;
+  private currentFrame: { sx: number; sy: number };
+
+  private readonly tileWidth: number;
+  private readonly tileHeight: number;
+  private readonly sprite: HTMLImageElement;
 
   colors = ['purple', 'blue', 'green', 'yellow', 'orange', 'red'];
 
-  constructor(name, gx, gy, tileWidth, tileHeight, w, h, direction, sprite) {
-    const x = gx * tileWidth + (tileWidth - w) / 2;
-    const y = gy * tileHeight + (tileHeight - h) / 2;
-    super(name, x, y, w, h, 'red');
+  constructor(name: string, gx: number, gy: number, tileWidth: number, tileHeight: number, w: number, h: number, direction: Direction, sprite: HTMLImageElement) {
+    super(name, gx * tileWidth + (tileWidth - w) / 2, gy * tileHeight + (tileHeight - h) / 2, w, h, 'red');
+
     this.gx = gx;
     this.gy = gy;
     this.tileWidth = tileWidth;
@@ -29,16 +39,15 @@ export class Player extends Entity {
       sx: 0,
       sy: 0
     };
-    this.logger = Logger.getLogger('Player', Logger.Levels.DEBUG);
   }
 
-  draw(context, camera) {
+  draw(context: CanvasRenderingContext2D, camera: Camera) {
     context.save();
 
     const offsetX = camera && camera.xScroll ? camera.xScroll : 0;
     const offsetY = camera && camera.yScroll ? camera.yScroll : 0;
 
-    context.drawImage(this.sprite.image, this.currentFrame.sx, this.currentFrame.sy,
+    context.drawImage(this.sprite, this.currentFrame.sx, this.currentFrame.sy,
       this.w, this.h, this.x - offsetX, this.y - offsetY, this.w, this.h);
 
     this.drawBoundingBox(context, camera);
@@ -46,7 +55,7 @@ export class Player extends Entity {
     context.restore();
   }
 
-  move(direction, map) {
+  move(direction: Direction, map: GameMap) {
     if (!this.isWalking) {
       this.direction = direction;
       const dest = map.getAdjacentCellCoord({
@@ -62,7 +71,7 @@ export class Player extends Entity {
     }
   }
 
-  update(map, keyboard) {
+  update(map: GameMap, keyboard: Keyboard) {
 
     if (this.isWalking) {
       this.isWalking++;
@@ -73,13 +82,13 @@ export class Player extends Entity {
 
     if (keyboard) {
       if (keyboard.isPressed('up')) {
-        this.move(direction.UP, map);
+        this.move(Direction.UP, map);
       } else if (keyboard.isPressed('down')) {
-        this.move(direction.DOWN, map);
+        this.move(Direction.DOWN, map);
       } else if (keyboard.isPressed('left')) {
-        this.move(direction.LEFT, map);
+        this.move(Direction.LEFT, map);
       } else if (keyboard.isPressed('right')) {
-        this.move(direction.RIGHT, map);
+        this.move(Direction.RIGHT, map);
       }
     }
 
@@ -90,8 +99,8 @@ export class Player extends Entity {
       this.currentFrame.sx = step * this.w;
 
       const prct = (this.isWalking / this.walkAnimationDuration);
-      const multiplier = (this.direction === direction.UP || this.direction === direction.LEFT) ? 1 : -1;
-      if (this.direction === direction.UP || this.direction === direction.DOWN) {
+      const multiplier = (this.direction === Direction.UP || this.direction === Direction.LEFT) ? 1 : -1;
+      if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
         offsetY = (this.tileHeight * multiplier) - (this.tileHeight * prct * multiplier);
       } else {
         offsetX = (this.tileWidth * multiplier) - (this.tileWidth * prct * multiplier);
